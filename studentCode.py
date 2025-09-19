@@ -209,11 +209,7 @@ def Lagrange_interpolation(x_values, y_values,x_star):
     for k in np.arange(0,len(x_values),1):
         y_star = y_star +y_values[k]*Lagrange_coefficient(k,x_star)
     return y_star
-#Nội suy Newton
-
-
-
-
+    
 # Sinh viên không được thay đổi định nghĩa hàm calculate và các nội dung có sẵn
 #P1,S1 alpha; P2,S2 beta
 
@@ -314,9 +310,17 @@ def calculate(P1, S1, P2, S2, D):
                 matched = True
 
 
-    # #Trường hợp g
-    # if is_prime(P2) and is_prime(S2):
-    #     results.append(0) #Học xong code tiếp
+    #Trường hợp g
+        if is_prime(P2) and is_prime(S2):
+            x_values_a = np.array([1,2,4])
+            y_values_a = np.array([P1,S1,P2])
+            x_values_b = np.array([1,2,4,5])
+            y_values_b = np.array([P1,S1,P2,S2])
+            X_a = Lagrange_interpolation(x_values_a,y_values_a,3)
+            X_b = Lagrange_interpolation(x_values_b,y_values_b,3)
+            results.append(X_a/X_b) 
+            matched = True
+             
 
 
     # #Trường hợp h
@@ -345,3 +349,4 @@ P1,S1,P2,S2,D = 41,29,62,12,7
 print(calculate(P1,S1,P2,S2,D))
 
  
+
