@@ -117,9 +117,9 @@ def is_prime(n):
 
 #Kiểm tra dãy Fibonacci
 def is_fibonacci(a,b,c,d):
-    nums = [a,b,c,d]
-    nums.sort()
-    return nums[2] == nums[0] + nums[1] and nums[3] == nums[1] + nums[2]
+    num = [a,b,c,d]
+    return all(is_square(5*x*x+4) or is_square(5*x*x-4) for x in num)
+    
 #Kiểm tra chéo trội:
 def create_matrix(a,b,c,d):
 
@@ -209,6 +209,15 @@ def Lagrange_interpolation(x_values, y_values,x_star):
     for k in np.arange(0,len(x_values),1):
         y_star = y_star +y_values[k]*Lagrange_coefficient(k,x_star)
     return y_star
+#Xấp xỉ đạo hàm sai phân tiến
+def forward_diff(f_func,x_0,h):
+    f_dash = (f_func(x_0+h) - f_func(x_0)) / h
+    return f_dash
+#xấp xỉ đạo hàm sai phân lùi
+def backward_diff(f_func,x_0,h):
+    f_dash = (f_func(x_0)-f_func(x_0-h)) / h
+    return f_dash
+
     
 # Sinh viên không được thay đổi định nghĩa hàm calculate và các nội dung có sẵn
 #P1,S1 alpha; P2,S2 beta
@@ -323,9 +332,25 @@ def calculate(P1, S1, P2, S2, D):
              
 
 
-    # #Trường hợp h
-    # if is_fibonacci(P1,S1,P2,S2):
-    #     results.append(0)#học xong code tiếp
+    #Trường hợp h
+    if is_fibonacci(P1,S1,P2,S2):
+        def f_func(x):
+            return x**2*np.log(x)
+        def f_prime(x):
+            return 2*x*np.log(x)+x
+        x_0 = 0.1*D
+        h = 0.01
+        a = forward_diff(f_func,x_0,h)
+        b = backward_diff(f_func,x_0,h)
+        be = f_prime(0.1*D)
+
+        Pa = 10*(abs(b-be) - abs(a-be))
+        if 0 <= Pa <= 1:
+            results.append(Pa)
+            matched = True
+        if Pa < 0 or Pa > 1:
+            results.append(max(0,min(1,Pa)))
+            matched = True
 
 
     # #Trường hợp i
@@ -345,7 +370,7 @@ def calculate(P1, S1, P2, S2, D):
     if student_out < 0 or student_out >1:
         student_out = max(0,min(1,student_out))
     return student_out
-P1,S1,P2,S2,D = 41,29,62,12,7
+P1,S1,P2,S2,D = 3,21,34,55,1
 print(calculate(P1,S1,P2,S2,D))
 
  
