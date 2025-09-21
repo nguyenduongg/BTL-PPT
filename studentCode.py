@@ -283,8 +283,14 @@ def calculate(P1, S1, P2, S2, D):
         x = 0.749368275822
         x_nB = find_root_bisection (f_func, a, b, D)
         x_nN = find_root_Newton_Raphson (f_func,f_prime,x_0,D)
-        results.append(np.abs(x_nB-x) - np.abs(x_nN-x))
-        matched = True
+        Pa = np.abs(x_nB-x) - np.abs(x_nN-x)
+        if 0 <= Pa <= 1:
+            results.append(Pa)
+            matched = True
+        if Pa < 0 or 1 < Pa:
+            Pa = max(0,min(1,Pa))
+            results.append(Pa)
+            matched = True
 
 
     #Trường hợp f
