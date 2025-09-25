@@ -225,9 +225,10 @@ def backward_diff(f_func,x_0,h):
 #Bắt đầu tính toán:
 def calculate(P1, S1, P2, S2, D):
     results=[]
+    truonghop = []
     student_out = 0.0
     matched = False 
-    
+    X_a, X_b = 0,0
     #Chuẩn hoá
     P1,S1,P2,S2 = standardization(P1, S1,P2,S2)
 
@@ -236,20 +237,24 @@ def calculate(P1, S1, P2, S2, D):
     if P1 == 99 and S1 == 88:
         results.append(1)
         matched = True
+        truonghop.append("a")
     if P2 == 99 and S2 == 88:
         results.append(0)
         matched = True
+        truonghop.append("a")
     if P1 == P2 == 99 and S1 == S2 == 88 and D != 12:
         results.append(base_case(P1,S1,P2,S2))
         matched = True
+        truonghop.append("a")
 
 
 
     #Trường hợp b
     if D % 2 == 0:
         if P1 > S2 + 20 or S1 > P2 + 20:
-            results.append(1 - 0.001*D)
+            results.append(1 - 0.01*D)
             matched = True
+            truonghop.append("b")
 
 
     #Trường hợp c
@@ -258,10 +263,12 @@ def calculate(P1, S1, P2, S2, D):
             results.append (max((P1 - S2)*(13-D)/999, 
                                 (S1- P2)*(13-D)/888) + 0.5)
             matched = True
+            truonghop.append("c")
         elif D >= 7: 
             results.append(max((P1 - S2)*(13-D)/999, 
                                (S1- P2)*(13-D)/888) - 0.2)
             matched = True
+            truonghop.append("c")
             
 
     #Trường hợp d:
@@ -269,6 +276,7 @@ def calculate(P1, S1, P2, S2, D):
         results.append(1 - min((P1-S2)*(13-D)/999,
                                (S1-P2)*(13-D)/888))
         matched = True
+        truonghop.append("d")
         
 
     #Trường hợp e:
@@ -287,10 +295,12 @@ def calculate(P1, S1, P2, S2, D):
         if 0 <= Pa <= 1:
             results.append(Pa)
             matched = True
+            truonghop.append("e")
         if Pa < 0 or 1 < Pa:
             Pa = max(0,min(1,Pa))
             results.append(Pa)
             matched = True
+            truonghop.append("e")
 
 
     #Trường hợp f
@@ -306,35 +316,42 @@ def calculate(P1, S1, P2, S2, D):
             x_g = approximate_solution_GausSeidel_method(mat_A,b,x0_G,D )
             results.append(np.linalg.norm(x_j,2)/np.linalg.norm(x_g,2))
             matched = True
+            truonghop.append("f")
         else:
             CJ = matrix_C_Jacobi(mat_A)
             CGS = matrix_C_GaussSeidel(mat_A)
             if spectral_radius(CJ) and not spectral_radius(CGS):
                 results.append(1)
                 matched = True
+                truonghop.append("f")
             elif spectral_radius(CGS) and not spectral_radius(CJ):
                 results.append(0)
                 matched = True
+                truonghop.append("f")
             elif not spectral_radius(CJ) and not spectral_radius(CGS):
                 results.append(0.5)
                 matched = True
+                truonghop.append("f")
             elif  spectral_radius(CGS) and spectral_radius(CJ):
                 x_j = approximate_solution_Jacobi_method(mat_A,b,x0_J,D)
                 x_g = approximate_solution_GausSeidel_method(mat_A,b,x0_G,D )
                 results.append(np.linalg.norm(x_j,2)/np.linalg.norm(x_g,2))
                 matched = True
+                truonghop.append("f")
 
 
     #Trường hợp g
-        if is_prime(P2) and is_prime(S2):
-            x_values_a = np.array([1,2,4])
-            y_values_a = np.array([P1,S1,P2])
-            x_values_b = np.array([1,2,4,5])
-            y_values_b = np.array([P1,S1,P2,S2])
-            X_a = Lagrange_interpolation(x_values_a,y_values_a,3)
-            X_b = Lagrange_interpolation(x_values_b,y_values_b,3)
-            results.append(X_a/X_b) 
-            matched = True
+    if is_prime(P2) and is_prime(S2):
+        x_values_a = np.array([1,2,4])
+        y_values_a = np.array([P1,S1,P2])
+        x_values_b = np.array([1,2,4,5])
+        y_values_b = np.array([P1,S1,P2,S2])
+        X_a = Lagrange_interpolation(x_values_a,y_values_a,3)
+        X_b = Lagrange_interpolation(x_values_b,y_values_b,3)
+        results.append(X_a/X_b) 
+
+        matched = True
+        truonghop.append("g")
              
 
 
@@ -354,9 +371,11 @@ def calculate(P1, S1, P2, S2, D):
         if 0 <= Pa <= 1:
             results.append(Pa)
             matched = True
+            truonghop.append("h")
         if Pa < 0 or Pa > 1:
             results.append(max(0,min(1,Pa)))
             matched = True
+            truonghop.append("h")
 
 
     # #Trường hợp i
@@ -376,8 +395,8 @@ def calculate(P1, S1, P2, S2, D):
     if student_out < 0 or student_out >1:
         student_out = max(0,min(1,student_out))
     return student_out
-P1,S1,P2,S2,D = 3,21,34,55,1
-print(calculate(P1,S1,P2,S2,D))
+# P1,S1,P2,S2,D = 1,12,17,7,10
+# print(calculate(P1,S1,P2,S2,D))
 
  
 
